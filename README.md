@@ -7,19 +7,8 @@ Plot phylogenetic trees annotated with amino acid and synonymous mutation annota
 ## Installation
 
 ```r
-# Install dependencies
-devtools::install_github("SamT123/seqUtils")
-devtools::install_github("SamT123/convergence")
-
-# Install mutationtree
 devtools::install_github("SamT123/mutationtree")
 ```
-
-**System requirements:**
-
-- [MAFFT](https://mafft.cbrc.jp/alignment/software/) for sequence alignment
-- [cmaple](https://github.com/iqtree/cmaple) for phylogenetic tree building
-- [UShER](https://github.com/yatisht/usher) for ancestral sequence reconstruction
 
 ## Relationship with convergence
 
@@ -27,15 +16,6 @@ devtools::install_github("SamT123/mutationtree")
 
 - **convergence** handles: tree building, ancestral sequence reconstruction, data structures
 - **mutationtree** handles: plotting trees with mutation labels
-
-## Quick Start
-
-```r
-library(mutationtree)
-
-# Assuming you have a tree_and_sequences object from convergence
-mutationtree::draw_mutation_tree(tree_and_sequences)
-```
 
 ## Examples
 
@@ -148,16 +128,3 @@ See `inst/example/customized_example.R` for a complete working example.
 **Output:**
 
 ![Customized example output](inst/example/customized_output.png)
-
-## Features
-
-- **Mutation labels**: Non-synonymous (amino acid) mutations shown with position-specific colors
-- **Synonymous counts**: Indicated as "+N" where N is the count
-- **Flexible styling**: Control colors, sizes, and positions of all elements
-- **Export formats**: PNG (600 dpi) or PDF
-- **Reference lines**: Mark clades or time periods
-- **Custom annotations**: Highlight specific nodes or tips
-
-## Output
-
-The function automatically sizes the output based on the number of sequences and creates a scale bar showing "1 mutation" for reference. Synonymous mutations are shown in grey, while non-synonymous mutations use customizable colors.
