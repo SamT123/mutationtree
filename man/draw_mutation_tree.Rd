@@ -2,7 +2,7 @@
 % Please edit documentation in R/draw_mutation_tree.R
 \name{draw_mutation_tree}
 \alias{draw_mutation_tree}
-\title{Draw a mutation annotated tree}
+\title{Draw a mutation-annotated phylogenetic tree}
 \usage{
 draw_mutation_tree(
   tree_and_sequences_asr,
@@ -18,21 +18,12 @@ draw_mutation_tree(
   tip_text_nudge = c(0.002, 0),
   tip_text_adj = c(0, 0.5),
   node_text_cex = 0.2,
-  node_text_nudge = c(-0.001, -0.001),
+  node_text_nudge = c(-0.002, -0.015),
   node_text_adj = c(1, 1),
   tip_node_text_aa_mutation_color = "grey30",
-  tip_node_text_aa_mutation_special_colors = list(red = c(145, 155, 156, 158, 159, 189,
-    193), orange = c(44L, 45L, 46L, 47L, 48L, 50L, 51L, 53L, 54L, 57L, 59L, 62L, 63L,
-    67L, 75L, 78L, 80L, 81L, 82L, 83L, 86L, 87L, 88L, 91L, 92L, 94L, 96L, 102L, 103L,
-    109L, 117L, 121L, 122L, 124L, 126L, 128L, 129L, 130L, 131L, 132L, 133L, 135L, 137L,
-    138L, 140L, 142L, 143L, 144L, 145L, 146L, 150L, 152L, 155L, 156L, 157L, 158L, 159L,
-    163L, 165L, 167L, 168L, 170L, 171L, 172L, 173L, 174L, 175L, 176L, 177L, 179L, 182L,
-    186L, 187L, 188L, 189L, 190L, 192L, 193L, 
-     194L, 196L, 197L, 198L, 201L, 203L,
-    207L, 208L, 209L, 212L, 213L, 214L, 215L, 216L, 217L, 218L, 219L, 226L, 227L, 228L,
-    229L, 230L, 238L, 240L, 242L, 244L, 246L, 247L, 248L, 260L, 261L, 262L, 265L, 273L,
-    275L, 276L, 278L, 279L, 280L, 294L, 297L, 299L, 300L, 304L, 305L, 307L, 308L, 309L,
-    310L, 311L, 312L)),
+  tip_node_text_aa_mutation_special_colors = list(red =
+    seqUtils::h3_epitope_positions[["koel"]], orange =
+    seqUtils::h3_epitope_positions[["wolf"]]),
   tip_node_text_syn_mutation_color = "grey70",
   line_width = 0.3,
   line_color = "grey50",
@@ -54,79 +45,130 @@ draw_mutation_tree(
 )
 }
 \arguments{
-\item{tree_and_sequences_asr}{...}
+\item{tree_and_sequences_asr}{A tree_and_sequences object with ancestral sequence
+reconstruction, created by \code{convergence::addASRusher()}.}
 
-\item{file}{...}
+\item{file}{Output file path. If NULL, displays interactively. Supported formats:
+PNG (600 dpi) or PDF.}
 
-\item{width}{...}
+\item{width}{Figure width in inches. Default: 6.}
 
-\item{height_per_sequence}{...}
+\item{height_per_sequence}{Height per tip in inches. Total height is calculated
+as \code{height_per_sequence * n_tips}. Default: 0.03.}
 
-\item{lines}{...}
+\item{lines}{List of lists defining horizontal reference lines. Each element:
+\code{list(height, text, line_color, text_color, line_width, text_cex, text_adj, text_nudge)}.}
 
-\item{modified_tip_labels}{...}
+\item{modified_tip_labels}{List of lists to customize tip labels. Each element:
+\code{list(old_label, new_label, text_color, text_cex)}.}
 
-\item{modified_node_labels}{...}
+\item{modified_node_labels}{List of lists to customize node mutation labels. Each element:
+\code{list(node, text_color, text_cex)}.}
 
-\item{additional_node_labels}{...}
+\item{additional_node_labels}{List of lists to add extra annotations. Each element:
+\code{list(node, text, text_color, text_cex, text_adj, text_nudge, point_color, point_cex)}.}
 
-\item{tip_text_cex}{...}
+\item{tip_text_cex}{Tip label text size. Default: 0.2.}
 
-\item{tip_text_label_color}{...}
+\item{tip_text_label_color}{Tip label text color. Default: "grey70".}
 
-\item{tip_text_nudge}{...}
+\item{tip_text_nudge}{Tip label position offset as \code{c(x, y)} fraction of plot range. Default: \code{c(0.002, 0)}.}
 
-\item{tip_text_adj}{...}
+\item{tip_text_adj}{Tip label text justification. Default: \code{c(0, 0.5)}.}
 
-\item{node_text_cex}{...}
+\item{node_text_cex}{Node mutation label text size. Default: 0.2.}
 
-\item{node_text_nudge}{...}
+\item{node_text_nudge}{Node label position offset as \code{c(x, y)} fraction of plot range. Default: \code{c(-0.002, -0.015)}.}
 
-\item{node_text_adj}{...}
+\item{node_text_adj}{Node label text justification. Default: \code{c(1, 1)}.}
 
-\item{tip_node_text_aa_mutation_color}{...}
+\item{tip_node_text_aa_mutation_color}{Default color for amino acid mutations. Default: "grey30".}
 
-\item{tip_node_text_aa_mutation_special_colors}{...}
+\item{tip_node_text_aa_mutation_special_colors}{Named list mapping colors to amino acid positions
+to highlight, e.g. \code{list(red = c(145, 155), blue = c(189))}. Default: H3 epitope positions.}
 
-\item{tip_node_text_syn_mutation_color}{...}
+\item{tip_node_text_syn_mutation_color}{Color for synonymous mutation counts. Default: "grey70".}
 
-\item{line_width}{...}
+\item{line_width}{Width of horizontal reference lines. Default: 0.3.}
 
-\item{line_color}{...}
+\item{line_color}{Color of horizontal reference lines. Default: "grey50".}
 
-\item{line_text_color}{...}
+\item{line_text_color}{Color of reference line text. Default: "black".}
 
-\item{line_text_cex}{...}
+\item{line_text_cex}{Reference line text size. Default: 1.}
 
-\item{line_text_adj}{...}
+\item{line_text_adj}{Reference line text justification. Default: \code{c(1, 1)}.}
 
-\item{line_text_nudge}{...}
+\item{line_text_nudge}{Reference line text position offset. Default: \code{c(-0.01, -0.003)}.}
 
-\item{node_addtext_cex}{...}
+\item{node_addtext_cex}{Additional node label text size. Default: \code{node_text_cex * 4}.}
 
-\item{node_addtext_color}{...}
+\item{node_addtext_color}{Additional node label text color. Default: "black".}
 
-\item{node_addtext_nudge}{...}
+\item{node_addtext_nudge}{Additional node label position offset. Default: \code{c(-0.004, -0.006)}.}
 
-\item{node_addtext_adj}{...}
+\item{node_addtext_adj}{Additional node label text justification. Default: \code{c(1, 1)}.}
 
-\item{node_point_color}{...}
+\item{node_point_color}{Additional node point color. Default: "black".}
 
-\item{node_point_cex}{...}
+\item{node_point_cex}{Additional node point size. Default: 0.8.}
 
-\item{edge_color}{...}
+\item{edge_color}{Color of tree edges. Default: "grey80".}
 
-\item{edge_width}{...}
+\item{edge_width}{Width of tree edges. If NULL, uses ape default. Default: NULL.}
 
-\item{x_lim_expand}{...}
+\item{x_lim_expand}{Plot x-axis expansion as \code{c(left, right)} fractions. Default: \code{c(0.02, 0.2)}.}
 
-\item{y_lim_expand}{...}
+\item{y_lim_expand}{Plot y-axis expansion as \code{c(bottom, top)} fractions. Default: \code{c(0.02, 0.02)}.}
 
-\item{node_nums}{...}
+\item{node_nums}{Logical; show node numbers for debugging. Default: FALSE.}
 }
 \value{
-...
+If \code{file} is specified, returns the file path. Otherwise, displays plot interactively.
 }
 \description{
-Draw a mutation annotated tree
+Creates a visualization of a phylogenetic tree with non-synonymous (amino acid)
+and synonymous mutations labeled on branches. Supports extensive customization
+of labels, colors, and annotations.
+}
+\section{Annotation parameters}{
+
+}
+
+\section{Tip label styling}{
+
+}
+
+\section{Node mutation styling}{
+
+}
+
+\section{Reference line styling}{
+
+}
+
+\section{Additional node annotation styling}{
+
+}
+
+\section{Tree styling}{
+
+}
+
+\examples{
+\dontrun{
+# Basic usage
+draw_mutation_tree(tree_with_asr)
+
+# Save to file
+draw_mutation_tree(tree_with_asr, file = "tree.png")
+
+# With annotations
+draw_mutation_tree(
+  tree_with_asr,
+  lines = list(list(height = 20, text = "Clade A")),
+  modified_tip_labels = list(list(old_label = "seq1", text_color = "red"))
+)
+}
+
 }
