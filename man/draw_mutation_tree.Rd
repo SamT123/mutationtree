@@ -124,37 +124,15 @@ to highlight, e.g. \code{list(red = c(145, 155), blue = c(189))}. Default: H3 ep
 \item{node_nums}{Logical; show node numbers for debugging. Default: FALSE.}
 }
 \value{
-If \code{file} is specified, returns the file path. Otherwise, displays plot interactively.
+If \code{file} is specified, returns the file path. If \code{file} is NULL,
+returns a list with components: \code{draw_fn} (function to execute the plot),
+\code{width} (plot width), and \code{height} (plot height).
 }
 \description{
 Creates a visualization of a phylogenetic tree with non-synonymous (amino acid)
 and synonymous mutations labeled on branches. Supports extensive customization
 of labels, colors, and annotations.
 }
-\section{Annotation parameters}{
-
-}
-
-\section{Tip label styling}{
-
-}
-
-\section{Node mutation styling}{
-
-}
-
-\section{Reference line styling}{
-
-}
-
-\section{Additional node annotation styling}{
-
-}
-
-\section{Tree styling}{
-
-}
-
 \examples{
 \dontrun{
 # Basic usage

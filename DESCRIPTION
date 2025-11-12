@@ -15,7 +15,6 @@ Imports:
     fs,
     graphics,
     grDevices,
-    labbook,
     magrittr,
     purrr,
     seqUtils,

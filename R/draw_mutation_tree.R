@@ -11,8 +11,6 @@
 #' @param width Figure width in inches. Default: 6.
 #' @param height_per_sequence Height per tip in inches. Total height is calculated
 #'   as \code{height_per_sequence * n_tips}. Default: 0.03.
-#'
-#' @section Annotation parameters:
 #' @param lines List of lists defining horizontal reference lines. Each element:
 #'   \code{list(height, text, line_color, text_color, line_width, text_cex, text_adj, text_nudge)}.
 #' @param modified_tip_labels List of lists to customize tip labels. Each element:
@@ -21,14 +19,10 @@
 #'   \code{list(node, text_color, text_cex)}.
 #' @param additional_node_labels List of lists to add extra annotations. Each element:
 #'   \code{list(node, text, text_color, text_cex, text_adj, text_nudge, point_color, point_cex)}.
-#'
-#' @section Tip label styling:
 #' @param tip_text_cex Tip label text size. Default: 0.2.
 #' @param tip_text_label_color Tip label text color. Default: "grey70".
 #' @param tip_text_nudge Tip label position offset as \code{c(x, y)} fraction of plot range. Default: \code{c(0.002, 0)}.
 #' @param tip_text_adj Tip label text justification. Default: \code{c(0, 0.5)}.
-#'
-#' @section Node mutation styling:
 #' @param node_text_cex Node mutation label text size. Default: 0.2.
 #' @param node_text_nudge Node label position offset as \code{c(x, y)} fraction of plot range. Default: \code{c(-0.002, -0.015)}.
 #' @param node_text_adj Node label text justification. Default: \code{c(1, 1)}.
@@ -36,31 +30,27 @@
 #' @param tip_node_text_aa_mutation_special_colors Named list mapping colors to amino acid positions
 #'   to highlight, e.g. \code{list(red = c(145, 155), blue = c(189))}. Default: H3 epitope positions.
 #' @param tip_node_text_syn_mutation_color Color for synonymous mutation counts. Default: "grey70".
-#'
-#' @section Reference line styling:
 #' @param line_width Width of horizontal reference lines. Default: 0.3.
 #' @param line_color Color of horizontal reference lines. Default: "grey50".
 #' @param line_text_color Color of reference line text. Default: "black".
 #' @param line_text_cex Reference line text size. Default: 1.
 #' @param line_text_adj Reference line text justification. Default: \code{c(1, 1)}.
 #' @param line_text_nudge Reference line text position offset. Default: \code{c(-0.01, -0.003)}.
-#'
-#' @section Additional node annotation styling:
 #' @param node_addtext_cex Additional node label text size. Default: \code{node_text_cex * 4}.
 #' @param node_addtext_color Additional node label text color. Default: "black".
 #' @param node_addtext_nudge Additional node label position offset. Default: \code{c(-0.004, -0.006)}.
 #' @param node_addtext_adj Additional node label text justification. Default: \code{c(1, 1)}.
 #' @param node_point_color Additional node point color. Default: "black".
 #' @param node_point_cex Additional node point size. Default: 0.8.
-#'
-#' @section Tree styling:
 #' @param edge_color Color of tree edges. Default: "grey80".
 #' @param edge_width Width of tree edges. If NULL, uses ape default. Default: NULL.
 #' @param x_lim_expand Plot x-axis expansion as \code{c(left, right)} fractions. Default: \code{c(0.02, 0.2)}.
 #' @param y_lim_expand Plot y-axis expansion as \code{c(bottom, top)} fractions. Default: \code{c(0.02, 0.02)}.
 #' @param node_nums Logical; show node numbers for debugging. Default: FALSE.
 #'
-#' @returns If \code{file} is specified, returns the file path. Otherwise, displays plot interactively.
+#' @returns If \code{file} is specified, returns the file path. If \code{file} is NULL,
+#'   returns a list with components: \code{draw_fn} (function to execute the plot),
+#'   \code{width} (plot width), and \code{height} (plot height).
 #'
 #' @examples
 #' \dontrun{
@@ -79,6 +69,7 @@
 #' }
 #'
 #' @importFrom dplyr filter
+#' @importFrom graphics segments
 #' @export
 draw_mutation_tree = function(
   tree_and_sequences_asr,
@@ -473,10 +464,12 @@ draw_mutation_tree = function(
 
   # file
   if (is.null(file)) {
-    labbook::out.plot(
-      code = draw(),
-      fig_width = width,
-      fig_height = height_per_sequence * ape::Ntip(tree_and_sequences_asr$tree)
+    return(
+      list(
+        draw_fn = draw,
+        width = width,
+        height = height_per_sequence * ape::Ntip(tree_and_sequences_asr$tree)
+      )
     )
   } else {
     format = fs::path_ext(file)
