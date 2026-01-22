@@ -2,7 +2,7 @@
 
 [![R-CMD-check](https://github.com/SamT123/mutationtree/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/SamT123/mutationtree/actions/workflows/R-CMD-check.yaml)
 
-Plot phylogenetic trees annotated with amino acid and synonymous mutation annotations along branches.
+Plot phylogenetic trees annotated with mutation annotations along branches.
 
 ## Installation
 
@@ -10,18 +10,13 @@ Plot phylogenetic trees annotated with amino acid and synonymous mutation annota
 devtools::install_github("SamT123/mutationtree")
 ```
 
-## Relationship with convergence
+## Relationship with `convergence`
 
-`mutationtree` is a visualization layer built on top of [`convergence`](https://github.com/SamT123/convergence):
-
-- **convergence** handles: tree building, ancestral sequence reconstruction, data structures
-- **mutationtree** handles: plotting trees with mutation labels
+`mutationtree` plots mutation annotated trees using the output of the [`convergence`](https://github.com/SamT123/convergence) package.
 
 ## Examples
 
 ### Basic Example
-
-Complete workflow from FASTA sequences to annotated tree:
 
 ```r
 library(tidyverse)
@@ -29,21 +24,22 @@ library(seqUtils)
 library(convergence)
 library(mutationtree)
 
-# 1. Load and align sequences
-aligned_sequences <- "sequences.fasta" %>%
+# 1. Load and align sequences --------------------------------------------------
+aligned_sequences <- "sequence.fasta" %>%
   seqUtils::fast_fasta() %>%
   seqUtils::mafft_align(seqUtils::alaska_232_2015_nts)
 
-# 2. Build phylogenetic tree
+# 2. Build phylogenetic tree ---------------------------------------------------
 tree <- seqUtils::make_cmaple_tree(
   sequences = aligned_sequences,
-  tree_path = "tree.nwk",
-  cmaple_path = "/path/to/cmaple/bin/",
-  out_sequence = "outgroup_name"
+  tree_path = "example.nwk",
+  cmaple_path = cmaple_path,
+  out_sequence = "A/Bayern/USAFSAM-16347/2025_H3N2",
+  keep_files = c()
 ) %>%
   ape::ladderize()
 
-# 3. Create tree_and_sequences object
+# 3. Create tree_and_sequences object ------------------------------------------
 tree_and_sequences <- convergence::makeTreeAndSequences(
   tree,
   tibble(
@@ -52,18 +48,20 @@ tree_and_sequences <- convergence::makeTreeAndSequences(
   )
 )
 
-# 4. Add ancestral sequence reconstruction
+# 4. Add ancestral sequence reconstruction -------------------------------------
 tree_with_asr <- convergence::addASRusher(
   tree_and_sequences,
   aa_ref = seqUtils::alaska_232_2015_aas,
   nuc_ref = seqUtils::alaska_232_2015_nts,
-  usher_path = "/path/to/usher/bin/"
+  usher_path = usher_path
 )
 
-# 5. Draw the tree
+# 5. Draw the mutation tree ----------------------------------------------------
 mutationtree::draw_mutation_tree(
   tree_with_asr,
-  file = "output.png"
+  file = "basic_output.png",
+  width = 4,
+  x_lim_expand = c(0.1, 0.5)
 )
 ```
 
@@ -80,44 +78,47 @@ Add annotations using four key arguments:
 ```r
 mutationtree::draw_mutation_tree(
   tree_with_asr,
-  file = "annotated.png",
-
+  file = "customized_output.png",
+  width = 4,
+  x_lim_expand = c(0.1, 0.5),
   # Add horizontal reference lines for clades
   lines = list(
     list(
-      height = 20,
-      text = "Clade label",
+      height = 21.5,
+      text = "Clade of interest",
       line_color = "steelblue",
-      text_color = "steelblue"
+      text_color = "steelblue",
+      text_cex = 0.8
     )
   ),
 
-  # Highlight specific tips
+  # Highlight specific tip labels
   modified_tip_labels = list(
     list(
-      old_label = "original_name",
-      new_label = "Highlighted: original_name",
+      old_label = "A/Bayern/USAFSAM-16347/2025_H3N2",
+      new_label = "HIGHLIGHTED SEQUENCE: A/Bayern/USAFSAM-16347/2025_H3N2",
       text_color = "darkred",
-      text_cex = 0.3
+      text_cex = 0.25
     )
   ),
 
-  # Emphasize mutations at nodes
+  # Emphasize mutations at specific nodes (e.g., trunk)
   modified_node_labels = list(
     list(
-      node = "123",
+      node = as.character(node_with_k189r),
       text_cex = 0.4,
       text_color = "purple"
     )
   ),
 
-  # Add extra labels with points
+  # Add extra annotations with points
   additional_node_labels = list(
     list(
-      node = 123,
-      text = "Important node",
+      node = node_with_k189r,
+      text = "K189R emergence",
       text_color = "purple",
-      point_color = "purple"
+      point_color = "purple",
+      point_cex = 1.0
     )
   )
 )
